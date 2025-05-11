@@ -1,115 +1,100 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { useState, useEffect, use } from 'react'
+import Header from './components/Header'
+import Breadcrumb from './components/navigators/Breadcrumb'
+import Card from './components/Card'
+import Footer from './components/Footer'
 
 export default function Home() {
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1))
+  }
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === slides.length - 1 ? 0 : prevIndex + 1))
+  }
+
+  const slides = [
+    {
+      url: "https://www.mindful.sodexo.com/wp-content/uploads/2017/02/simple-guide.jpg"
+    },
+    {
+      url: "https://cdn-prod.medicalnewstoday.com/content/images/articles/320/320865/various-fruits-and-vegetables-that-are-considered-clean-eating.jpg"
+    },
+    {
+      url: "https://hips.hearstapps.com/countryliving/assets/17/16/1492542444-clean-eating-recipes-.jpg"
+    }
+  ]
+
+  const mockData = [
+    {
+      id: 1234,
+      image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
+      name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
+      price: 150.00
+    },
+    {
+      id: 5678,
+      image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
+      name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
+      price: 120.00
+    },
+    {
+      id: 9011,
+      image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
+      name: "เมี่ยงปลาเผา",
+      price: 100.00
+    },
+    {
+      id: 5344,
+      image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
+      name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
+      price: 80.00
+    },
+  ]
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const autoSlide = setInterval(() => {
+      nextSlide()
+    }, 6000)
+
+    return () => clearInterval(autoSlide)
+  }, [currentIndex])
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className=''>
+      <header className='sticky top-0 z-50'>
+        <Header />
+      </header>
+
+      <main>
+        <Breadcrumb crumbs={[{ name: "Home", link: "/" }]} />
+        <div className='h-[400px] w-full mt-5 m-auto realative group'>
+          <div style={{ backgroundImage: `url(${slides[currentIndex].url})` }} className='w-full h-full bg-center bg-cover duration-500'>
+
+          </div>
+        </div>
+        <div className='mt-10 text-center'>
+          <h1 className='flex justify-center text-center text-3xl font-bold'>OuClean (อู๋คลีน)</h1>
+          <p className='mt-5 flex justify-center text-justify px-[25%]'>
+            ร้าน OuClean (อู๋คลีน) ร้านขายอาหารคลีนเพื่อสุขภาพ อาหารทุกจานทำจากวัตถุดิบคุณภาพดี ทำสดใหม่ทุกวัน รสชาติดี ทานง่าย ถูกปากทุกคน
+            มีเมนูให้เลือกมากมาย พร้อมจัดส่งถึงหน้าบ้าน
+            อาหารทุกเมนูมีแคลลอรี่และโภชนาการกำกับไว้ ง่ายต่อการคำนวณแคลลอรี่ที่ต้องได้รับต่อวัน เหมาะสำหรับท่านที่คุมน้ำหนัก
+          </p>
+        </div>
+        <div className='mt-5 px-[25%]'>
+          <h1 className='text-3xl font-bold'>เมนูแนะนำ</h1>
+          <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
+            {mockData.map((item, index) => (
+              <Card key={index} id={item.id} image={item.image} imagealt={item.name} name={item.name} price={item.price} />
+            ))}
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Footer />
     </div>
-  );
+  )
 }

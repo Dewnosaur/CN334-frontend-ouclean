@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -68,7 +69,7 @@ const OrderDetail = () => {
             </thead>
             <tbody className='bg-white'>
               {mockOrders.map((item, index) => (
-                <tr key={index}>
+                <tr key={index} className=''>
                   <td className='p-4 text-sm flex items-center'>
                     <img src={item.image} className='w-20 h-20 mr-4' alt={item.name} />
                     <a href='#' className='hover:underline hover:text-orange-400'>{item.name}</a>

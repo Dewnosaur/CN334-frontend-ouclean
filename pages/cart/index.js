@@ -1,14 +1,8 @@
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
-=======
-/* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from 'react';
->>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const cart = () => {
-<<<<<<< HEAD
     const [cartData, setCartData] = useState([]);
     const [quantities, setQuantities] = useState([]);
 
@@ -39,61 +33,6 @@ const cart = () => {
 
     const totalPrice = cartData.reduce((total, item, index) => {
         return total + item.price * (quantities[index] || 1);
-=======
-
-    const [cartItems, setCartItems] = useState([]);
-
-    useEffect(() => {
-        const items = JSON.parse(localStorage.getItem('cart') || '[]');
-        setCartItems(items);
-    }, []);
-
-    const mockData = [
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
-            name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
-            price: 150.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
-            name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
-            price: 120.00,
-            quantity: 2
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
-            name: "เมี่ยงปลาเผา",
-            price: 100.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
-            name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
-            price: 80.00,
-            quantity: 3
-        }
-    ];
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-
-    const increment = (index) => {
-        const updated = [...cartItems];
-        updated[index].quantity += 1;
-        setCartItems(updated);
-        localStorage.setItem('cart', JSON.stringify(updated));
-    };
-
-    const decrement = (index) => {
-        const updated = [...cartItems];
-        updated[index].quantity = Math.max(updated[index].quantity - 1, 1);
-        setCartItems(updated);
-        localStorage.setItem('cart', JSON.stringify(updated));
-    };
-
-    const totalPrice = cartItems.reduce((total, item, index) => {
-        return total + item.price * item.quantity;
->>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
     }, 0);
 
     return (
@@ -116,11 +55,7 @@ const cart = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-white'>
-<<<<<<< HEAD
                             {cartData.map((item, index) => (
-=======
-                            {cartItems.map((item, index) => (
->>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
                                 <tr key={index}>
                                     <td className='p-4 text-sm flex items-center'>
                                         <img src={item.image} className='w-20 h-20 mr-4' alt={item.name} />
@@ -144,11 +79,7 @@ const cart = () => {
                                             </button>
                                         </div>
                                     </td>
-<<<<<<< HEAD
                                     <td className='p-4 text-sm'>{(item.price * (quantities[index] || 1)).toFixed(2)}</td>
-=======
-                                    <td className='p-4 text-sm'>{(item.price * item.quantity).toFixed(2)}</td>
->>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
                                 </tr>
                             ))}
                         </tbody>

@@ -13,7 +13,7 @@ const MenuDetail = () => {
   const [error, setError] = useState("")
   const [quantity, setQuantity] = useState(1)
 
-  const increment = () => setQuantity(q => q + 1)
+  const increment = () => setQuantity(q => (product && product.stock ? Math.min(q + 1, product.stock) : q + 1))
   const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1))
 
   useEffect(() => {
@@ -38,18 +38,26 @@ const MenuDetail = () => {
   if (!product) return null
 
   const handleAddToCart = () => {
+    if (quantity > product.stock) {
+      alert('จำนวนสินค้ามีไม่เพียงพอในสต็อก');
+      return;
+    }
     const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    const index = existingCart.findIndex((item) => item.id === mockData.id);
+    const index = existingCart.findIndex((item) => item.id === product.id);
 
     if (index > -1) {
+      // Prevent exceeding stock in cart
+      if (existingCart[index].quantity + quantity > product.stock) {
+        alert('จำนวนสินค้ามีไม่เพียงพอในสต็อก');
+        return;
+      }
       existingCart[index].quantity += quantity;
     } else {
       existingCart.push({
-        id: mockData.id,
-        name: mockData.name,
-        price: mockData.price,
-        image: mockData.image,
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image || product.picture,
         quantity: quantity,
       });
     }

@@ -1,8 +1,10 @@
 import {React, useState, useEffect} from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const checkout = () => {
+    useAuthRedirect();
     const [cartData, setCartData] = useState([]);
 
     useEffect(() => {
@@ -14,7 +16,9 @@ const checkout = () => {
     const totalItems = cartData.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cartData.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    const [showPopup, setShowPopup] = useState(false)
+    const [showPopup, setShowPopup] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState("cod");
+    const [receiptImage, setReceiptImage] = useState(null);
 
     return (
         <div className='flex flex-col min-h-screen'>
@@ -22,10 +26,88 @@ const checkout = () => {
                 <Header />
             </header>
             <main className="flex flex-1 mt-5 justify-center py-8">
-                <form className="flex flex-col md:flex-row items-start gap-10 w-full max-w-6xl px-10" onSubmit={(e) => {
+                <form className="flex flex-col md:flex-row items-start gap-10 w-full max-w-6xl px-10" onSubmit={async (e) => {
                     e.preventDefault();
-                    // ทำการ submit form ทั้งหมด
-                    console.log("Form submitted")
+
+                    // Compose shipping address as a single string
+                    const shipping_address =
+                        `ที่อยู่: ${e.target.address.value}, ` +
+                        `ตำบล/แขวง: ${e.target.subdistrict.value}, ` +
+                        `อำเภอ/เขต: ${e.target.district.value}, ` +
+                        `จังหวัด: ${e.target.province.value}, ` +
+                        `รหัสไปรษณีย์: ${e.target.zipcode.value}`;
+
+                    // Get user token and user id (replace with your actual logic)
+                    const token = localStorage.getItem('token'); // or however you store it
+                    const userId = localStorage.getItem('user_id'); // or get from context/auth
+
+                    console.log('Token:', token);
+
+                    // 1. Create Payment
+                    const paymentForm = new FormData();
+                    paymentForm.append('payment_owner', userId);
+                    paymentForm.append('method', paymentMethod === "cod" ? "cod" : "promptpay");
+                    if (paymentMethod === "promptpay" && receiptImage) {
+                        paymentForm.append('slip', receiptImage);
+                    }
+
+                    let paymentId = null;
+                    try {
+                        const token = localStorage.getItem('token');
+                        const paymentRes = await fetch('http://localhost:8000/api/payments/', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Token ${token}`,
+                            },
+                            body: paymentForm,
+                        });
+                        if (!paymentRes.ok) {
+                            const errorText = await paymentRes.text();
+                            alert('เกิดข้อผิดพลาดในการสร้างข้อมูลการชำระเงิน\n' + errorText);
+                            return;
+                        }
+                        const paymentData = await paymentRes.json();
+                        paymentId = paymentData.id;
+                    } catch (err) {
+                        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ (ชำระเงิน)');
+                        return;
+                    }
+
+                    // 2. Create Order
+                    const orderData = {
+                        total_price: totalPrice,
+                        shipping_address: shipping_address,
+                        payment: paymentId,
+                        products: cartData.map(item => ({
+                            name: item.name,
+                            quantity: item.quantity,
+                            total_price: item.price * item.quantity
+                        }))
+                    };
+
+                    console.log('Order payload:', orderData);
+
+                    try {
+                        const orderRes = await fetch('http://localhost:8000/api/orders/', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Token ${token}`,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(orderData),
+                        });
+
+                        if (orderRes.ok) {
+                            localStorage.removeItem('cart');
+                            setShowPopup(true);
+                        } else {
+                            const errorText = await orderRes.text();
+                            alert('เกิดข้อผิดพลาดในการส่งข้อมูลคำสั่งซื้อ\n' + errorText);
+                            console.error('Error:', errorText);
+                        }
+                    } catch (err) {
+                        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ (คำสั่งซื้อ)');
+                    }
                 }}>
 
                     {/* กล่องซ้าย (ข้อมูลผู้สั่งซื้อ / ที่อยู่) */}
@@ -171,21 +253,49 @@ const checkout = () => {
                                         name="payment"
                                         value="cod"
                                         className="mr-2"
-                                        defaultChecked
+                                        checked={paymentMethod === "cod"}
+                                        onChange={() => setPaymentMethod("cod")}
                                     />
                                     <label htmlFor="cod" className="">ปลายทาง</label>
                                 </div>
                                 <div className="flex items-center">
                                     <input
                                         type="radio"
-                                        id="qrcode"
+                                        id="promptpay"
                                         name="payment"
-                                        value="qrcode"
+                                        value="promptpay"
                                         className="mr-2"
+                                        checked={paymentMethod === "promptpay"}
+                                        onChange={() => setPaymentMethod("promptpay")}
                                     />
-                                    <label htmlFor="qrcode" className="">QrCode</label>
+                                    <label htmlFor="promptpay" className="">PromptPay</label>
                                 </div>
                             </div>
+                            {paymentMethod === "promptpay" && (
+                                <div className="mt-4 p-4 bg-gray-100 rounded">
+                                    <div className="mb-2 text-lg font-semibold text-blue-600">
+                                        081-550-5535 พนมไพร ดาบทอง
+                                    </div>
+                                    <label className="block mb-2 text-sm font-medium text-gray-700">
+                                        แนบสลิปการชำระเงิน
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={e => setReceiptImage(e.target.files[0])}
+                                        className="mb-2"
+                                    />
+                                    {receiptImage && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={URL.createObjectURL(receiptImage)}
+                                                alt="สลิปการชำระเงิน"
+                                                className="max-h-40 rounded border"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         <div className='mt-15 flex justify-end'>
                             <button type='submit' className='text-white bg-lime-400 hover:bg-lime-500 py-2 px-8 rounded shadow-md'

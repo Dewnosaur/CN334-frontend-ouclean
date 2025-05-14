@@ -51,7 +51,7 @@ const Nav = () => {
         <div className="flex items-center gap-6">
           {/* cart */}
           <div className="w-10 h-auto bg-gray-100 rounded-full flex justify-center items-center hover:bg-orange-300 cursor-pointer relative">
-            <a href="cart">
+            <a href="/cart">
               <img src="/cart-icon.png" alt="cart" />
             </a>
             <span id="cart" className="absolute w-[20px] h-[20px] bg-red-500 rounded-full top-2/3 right-1/2 flex justify-center items-center text-white text-sm">{cartQuantity}</span>
@@ -60,7 +60,7 @@ const Nav = () => {
           {/* profile / login */}
           {isLogin ? (
             <div className="w-10 h-auto cursor-pointer">
-              <a href="dashboard">
+              <a href="/dashboard">
                 <img src="/profile-icon.png" alt="profile" />
               </a>
             </div>

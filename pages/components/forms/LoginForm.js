@@ -22,8 +22,9 @@ function LoginForm() {
         throw new Error("Invalid credentials")
       }
       const data = await res.json()
-      // Save token or user info as needed (e.g., localStorage)
-      // localStorage.setItem("token", data.token)
+      const { token, user_id } = data
+      localStorage.setItem('token', token)
+      localStorage.setItem('user_id', user_id)
       window.location.href = "/" // Redirect on success
     } catch (err) {
       setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง")

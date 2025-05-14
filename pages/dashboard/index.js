@@ -11,7 +11,12 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const res = await fetch("http://localhost:8000/api/my-orders/")
+                const token = localStorage.getItem('token');
+                const res = await fetch("http://localhost:8000/api/my-orders/", {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    }
+                });
                 if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้")
                 const data = await res.json()
                 setOrders(data)

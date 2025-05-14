@@ -12,10 +12,27 @@ const cart = () => {
         setQuantities(storedCart.map(item => item.quantity));
     }, []);
 
-    const increment = (index) => {
-        const newQuantities = quantities.map((q, i) => (i === index ? q + 1 : q));
-        setQuantities(newQuantities);
-        updateCartQuantity(index, newQuantities[index]);
+    const increment = async (index) => {
+        const productId = cartData[index]?.id;
+        if (!productId) return;
+
+        // Fetch latest stock from backend
+        try {
+            const res = await fetch(`http://localhost:8000/api/products/${productId}/details/`);
+            if (!res.ok) throw new Error('ไม่สามารถเช็คสต็อกได้');
+            const data = await res.json();
+            const latestStock = data.stock ?? 1;
+
+            if (quantities[index] < latestStock) {
+                const newQuantities = quantities.map((q, i) => (i === index ? q + 1 : q));
+                setQuantities(newQuantities);
+                updateCartQuantity(index, newQuantities[index]);
+            } else {
+                alert('จำนวนสินค้ามีไม่เพียงพอในสต็อก');
+            }
+        } catch (err) {
+            alert('เกิดข้อผิดพลาดในการเช็คสต็อก');
+        }
     };
 
     const decrement = (index) => {
@@ -70,7 +87,7 @@ const cart = () => {
                                             >
                                                 -
                                             </button>
-                                            <div className='bg-orange-300 px-4 py-1'>{item.quantity}</div>
+                                            <div className='bg-orange-300 px-4 py-1'>{quantities[index]}</div>
                                             <button
                                                 onClick={() => increment(index)}
                                                 className='bg-orange-300 px-2 py-1 rounded-r hover:bg-orange-400'

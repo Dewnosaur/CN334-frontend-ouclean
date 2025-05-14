@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-const cart = () => {
+const Cart = () => {
     const [cartData, setCartData] = useState([]);
     const [quantities, setQuantities] = useState([]);
 
@@ -127,4 +127,4 @@ const cart = () => {
     );
 };
 
-export default cart;
+export default Cart;

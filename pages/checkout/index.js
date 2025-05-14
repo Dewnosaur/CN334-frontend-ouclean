@@ -1,41 +1,19 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect} from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 const checkout = () => {
+    const [cartData, setCartData] = useState([]);
 
-    const mockData = [
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
-            name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
-            price: 150.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
-            name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
-            price: 120.00,
-            quantity: 2
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
-            name: "เมี่ยงปลาเผา",
-            price: 100.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
-            name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
-            price: 80.00,
-            quantity: 3
-        }
-    ];
+    useEffect(() => {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartData(storedCart);
+    }, []);
 
-    // คำนวณยอดรวมจำนวนรายการและราคารวมทั้งหมด
-    const totalItems = mockData.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = mockData.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // Calculate totals based on cartData
+    const totalItems = cartData.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cartData.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [showPopup, setShowPopup] = useState(false)
 
     return (
@@ -164,7 +142,7 @@ const checkout = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {mockData.map((item, idx) => (
+                                {cartData.map((item, idx) => (
                                     <tr key={idx} className="">
                                         <td className="py-5">
                                             <div>{item.name}</div>

@@ -1,13 +1,15 @@
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Breadcrumb from './components/navigators/Breadcrumb'
 import Card from './components/Card'
 import Footer from './components/Footer'
 
 export default function Home() {
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1))
   }
@@ -28,41 +30,29 @@ export default function Home() {
     }
   ]
 
-  const mockData = [
-    {
-      id: 1234,
-      image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
-      name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
-      price: 150.00
-    },
-    {
-      id: 5678,
-      image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
-      name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
-      price: 120.00
-    },
-    {
-      id: 9011,
-      image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
-      name: "เมี่ยงปลาเผา",
-      price: 100.00
-    },
-    {
-      id: 5344,
-      image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
-      name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
-      price: 80.00
-    },
-  ]
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const autoSlide = setInterval(() => {
       nextSlide()
     }, 6000)
-
     return () => clearInterval(autoSlide)
   }, [currentIndex])
+
+  // Fetch products from backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/products/")
+        if (!res.ok) throw new Error("ไม่สามารถโหลดสินค้าได้")
+        const data = await res.json()
+        setProducts(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
+  }, [])
 
   return (
     <div className=''>
@@ -74,7 +64,6 @@ export default function Home() {
         <Breadcrumb crumbs={[{ name: "Home", link: "/" }]} />
         <div className='h-[400px] w-full mt-5 m-auto realative group'>
           <div style={{ backgroundImage: `url(${slides[currentIndex].url})` }} className='w-full h-full bg-center bg-cover duration-500'>
-
           </div>
         </div>
         <div className='mt-10 text-center'>
@@ -87,11 +76,24 @@ export default function Home() {
         </div>
         <div className='mt-5 px-[25%]'>
           <h1 className='text-3xl font-bold'>เมนูแนะนำ</h1>
-          <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
-            {mockData.map((item, index) => (
-              <Card key={index} id={item.id} image={item.image} imagealt={item.name} name={item.name} price={item.price} />
-            ))}
-          </div>
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div className="text-red-500">{error}</div>
+          ) : (
+            <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
+              {products.map((item, index) => (
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  image={item.picture || item.image}
+                  imagealt={item.name}
+                  name={item.name}
+                  price={item.price}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

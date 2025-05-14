@@ -1,30 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Breadcrumb from '../components/navigators/Breadcrumb';
 
-const dashboard = () => {
+const Dashboard = () => {
+    const [orders, setOrders] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
-    const mockData = [
-        {
-            id: "1234",
-            date: "2 พค 2568",
-            total: 730,
-            status: "กำลังดำเนินการ"
-        },
-        {
-            id: "5678",
-            date: "3 พค 2568",
-            total: 1200,
-            status: "จัดส่งเสร็จสิ้น"
-        },
-        {
-            id: "9012",
-            date: "4 พค 2568",
-            total: 250,
-            status: "กำลังจัดส่ง"
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const res = await fetch("http://localhost:8000/api/my-orders/")
+                if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้")
+                const data = await res.json()
+                setOrders(data)
+            } catch (err) {
+                setError(err.message)
+            } finally {
+                setLoading(false)
+            }
         }
-    ]
+        fetchOrders()
+    }, [])
 
     return (
         <div className='flex flex-col min-h-screen'>
@@ -46,23 +44,29 @@ const dashboard = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-white'>
-                            {mockData.map((order) => (
-                                <tr key={order.id}>
-                                    <td className='p-4 text-sm'>
-                                        <a href='#' className='hover:underline hover:text-orange-400'>#{order.id}</a>
-                                    </td>
-                                    <td className='p-4 text-sm'>{order.date}</td>
-                                    <td className='p-4 text-sm'>{order.total}</td>
-                                    <td className='p-4 text-sm'>{order.status}</td>
-                                    <td className='p-4 text-sm'>
-                                        <div className="flex justify-center items-center">
-                                            <a href={`/dashboard/${mockData.id}`} className='bg-orange-300 text-white px-5 py-2 rounded hover:bg-orange-400'>
-                                                ดูรายละเอียด
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                            {loading ? (
+                                <tr><td colSpan={5}>Loading...</td></tr>
+                            ) : error ? (
+                                <tr><td colSpan={5} className="text-red-500">{error}</td></tr>
+                            ) : (
+                                orders.map((order) => (
+                                    <tr key={order.id}>
+                                        <td className='p-4 text-sm'>
+                                            <a href={`/dashboard/${order.id}`} className='hover:underline hover:text-orange-400'>#{order.id}</a>
+                                        </td>
+                                        <td className='p-4 text-sm'>{order.created_at ? new Date(order.created_at).toLocaleDateString() : '-'}</td>
+                                        <td className='p-4 text-sm'>{order.total_price}</td>
+                                        <td className='p-4 text-sm'>{order.status}</td>
+                                        <td className='p-4 text-sm'>
+                                            <div className="flex justify-center items-center">
+                                                <a href={`/dashboard/${order.id}`} className='bg-orange-300 text-white px-5 py-2 rounded hover:bg-orange-400'>
+                                                    ดูรายละเอียด
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -70,9 +74,8 @@ const dashboard = () => {
             <footer>
                 <Footer />
             </footer>
-
         </div>
     )
 }
 
-export default dashboard
+export default Dashboard

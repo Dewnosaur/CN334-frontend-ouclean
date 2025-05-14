@@ -1,24 +1,39 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Breadcrumb from '../components/navigators/Breadcrumb'
 
 const menudesc = () => {
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [quantity, setQuantity] = useState(1)
 
-  const mockData = {
-    id: 11123,
-    image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
-    name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
-    description: "-180 cal\n-2g Carbs\n-2g Fat\n36g Protein",
-    price: 150.00
-  }
+  // Change this to get the product ID dynamically if needed
+  const productId = 1
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [quantity, setQuantity] = useState(1);
+  const increment = () => setQuantity(q => q + 1)
+  const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1))
 
-  const increment = () => setQuantity(q => q + 1);
-  const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1));
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/products/${productId}/details/`)
+        if (!res.ok) throw new Error("ไม่พบสินค้า")
+        const data = await res.json()
+        setProduct(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProduct()
+  }, [productId])
+
+  if (loading) return <div>Loading...</div>
+  if (error) return <div className="text-red-500">{error}</div>
+  if (!product) return null
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -26,18 +41,22 @@ const menudesc = () => {
         <Header />
       </header>
       <main className='flex-1'>
-        <Breadcrumb crumbs={[{ name: "Home", link: "/" }, { name: "menu", link: "menu" }, { name: mockData.name, link: "menudesc" }]} />
+        <Breadcrumb crumbs={[
+          { name: "Home", link: "/" },
+          { name: "menu", link: "/menu" },
+          { name: product.name, link: "/menudesc" }
+        ]} />
         <div className='mt-5 mx-[5%] flex flex-col md:flex-row gap-15'>
-          <img src={mockData.image} className=' md:w-[20%] w-[50%]' />
+          <img src={product.picture || product.image} className=' md:w-[20%] w-[50%]' />
 
           {/* ก้อนข้อมูลสินค้า */}
           <div className='flex flex-col'>
-            <h1 className='text-4xl font-bold'>{mockData.name}</h1>
-            <h2 className='mt-10 text-3xl'>ราคา : {mockData.price} บาท</h2>
+            <h1 className='text-4xl font-bold'>{product.name}</h1>
+            <h2 className='mt-10 text-3xl'>ราคา : {product.price} บาท</h2>
             <h2 className='mt-10 text-2xl'>รายละเอียดเพิ่มเติม</h2>
 
             <p className='mt-5'>
-              {mockData.description.split('\n').map((line, idx) => (
+              {(product.description || "").split('\n').map((line, idx) => (
                 <React.Fragment key={idx}>
                   {line}
                   <br />

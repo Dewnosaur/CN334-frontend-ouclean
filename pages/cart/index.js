@@ -1,48 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const cart = () => {
-    const mockData = [
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
-            name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
-            price: 150.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
-            name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
-            price: 120.00,
-            quantity: 2
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
-            name: "เมี่ยงปลาเผา",
-            price: 100.00,
-            quantity: 1
-        },
-        {
-            image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
-            name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
-            price: 80.00,
-            quantity: 3
-        }
-    ];
+    const [cartData, setCartData] = useState([]);
+    const [quantities, setQuantities] = useState([]);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [quantities, setQuantities] = useState(mockData.map(item => item.quantity));
+    useEffect(() => {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartData(storedCart);
+        setQuantities(storedCart.map(item => item.quantity));
+    }, []);
 
     const increment = (index) => {
-        setQuantities(quantities.map((q, i) => (i === index ? q + 1 : q)));
+        const newQuantities = quantities.map((q, i) => (i === index ? q + 1 : q));
+        setQuantities(newQuantities);
+        updateCartQuantity(index, newQuantities[index]);
     };
 
     const decrement = (index) => {
-        setQuantities(quantities.map((q, i) => (i === index ? Math.max(q - 1, 1) : q)));
+        const newQuantities = quantities.map((q, i) => (i === index ? Math.max(q - 1, 1) : q));
+        setQuantities(newQuantities);
+        updateCartQuantity(index, newQuantities[index]);
     };
 
-    const totalPrice = mockData.reduce((total, item, index) => {
-        return total + item.price * quantities[index];
+    const updateCartQuantity = (index, newQuantity) => {
+        const updatedCart = [...cartData];
+        updatedCart[index].quantity = newQuantity;
+        setCartData(updatedCart);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+    };
+
+    const totalPrice = cartData.reduce((total, item, index) => {
+        return total + item.price * (quantities[index] || 1);
     }, 0);
 
     return (
@@ -65,7 +55,7 @@ const cart = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-white'>
-                            {mockData.map((item, index) => (
+                            {cartData.map((item, index) => (
                                 <tr key={index}>
                                     <td className='p-4 text-sm flex items-center'>
                                         <img src={item.image} className='w-20 h-20 mr-4' alt={item.name} />
@@ -89,7 +79,7 @@ const cart = () => {
                                             </button>
                                         </div>
                                     </td>
-                                    <td className='p-4 text-sm'>{(item.price * quantities[index]).toFixed(2)}</td>
+                                    <td className='p-4 text-sm'>{(item.price * (quantities[index] || 1)).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>

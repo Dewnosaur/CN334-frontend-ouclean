@@ -3,7 +3,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import useAuthRedirect from '../../hooks/useAuthRedirect';
 
-const checkout = () => {
+const Checkout = () => {
     useAuthRedirect();
     const [cartData, setCartData] = useState([]);
 
@@ -343,4 +343,4 @@ const checkout = () => {
     )
 }
 
-export default checkout
+export default Checkout

@@ -18,7 +18,7 @@ const cart = () => {
 
         // Fetch latest stock from backend
         try {
-            const res = await fetch(`http://localhost:8000/api/products/${productId}/details/`);
+            const res = await fetch(`https://three34-ouclean.onrender.com/api/products/${productId}/details/`);
             if (!res.ok) throw new Error('ไม่สามารถเช็คสต็อกได้');
             const data = await res.json();
             const latestStock = data.stock ?? 1;

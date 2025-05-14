@@ -13,7 +13,7 @@ function SignUpForm() {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:8000/api/register/", {
+      const res = await fetch("https://three34-ouclean.onrender.com/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

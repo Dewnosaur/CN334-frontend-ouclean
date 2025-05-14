@@ -12,7 +12,7 @@ const Dashboard = () => {
         const fetchOrders = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch("http://localhost:8000/api/my-orders/", {
+                const res = await fetch("https://three34-ouclean.onrender.com/api/my-orders/", {
                     headers: {
                         'Authorization': `Token ${token}`,
                     }

@@ -11,7 +11,7 @@ function LoginForm() {
     e.preventDefault()
     setError("")
     try {
-      const res = await fetch("http://localhost:8000/api/login/", {
+      const res = await fetch("https://three34-ouclean.onrender.com/api/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

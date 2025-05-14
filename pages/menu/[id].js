@@ -20,7 +20,7 @@ const MenuDetail = () => {
     if (!id) return
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/products/${id}/details/`)
+        const res = await fetch(`https://three34-ouclean.onrender.com/api/products/${id}/details/`)
         if (!res.ok) throw new Error("ไม่พบสินค้า")
         const data = await res.json()
         setProduct(data)

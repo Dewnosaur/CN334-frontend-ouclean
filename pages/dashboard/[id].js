@@ -21,7 +21,7 @@ const OrderDetail = () => {
         const token = localStorage.getItem('token')
         if (!token) throw new Error('No token in localStorage')
         // Fetch orders
-        const res = await fetch('http://localhost:8000/api/my-orders/', {
+        const res = await fetch('https://three34-ouclean.onrender.com/api/my-orders/', {
           headers: {
             'Authorization': `Token ${token}`,
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const OrderDetail = () => {
 
         // Fetch payment if payment id exists
         if (foundOrder.payment) {
-          const paymentRes = await fetch(`http://localhost:8000/api/payments/${foundOrder.payment}/`, {
+          const paymentRes = await fetch(`https://three34-ouclean.onrender.com/api/payments/${foundOrder.payment}/`, {
             headers: {
               'Authorization': `Token ${token}`,
               'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const OrderDetail = () => {
           }
         }
         // Fetch all products
-        const productRes = await fetch('http://localhost:8000/api/products/', {
+        const productRes = await fetch('https://three34-ouclean.onrender.com/api/products/', {
           headers: {
             'Authorization': `Token ${token}`,
             'Content-Type': 'application/json',

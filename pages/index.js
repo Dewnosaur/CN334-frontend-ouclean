@@ -41,7 +41,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/products/")
+        const res = await fetch("https://three34-ouclean.onrender.com/api/products/")
         if (!res.ok) throw new Error("ไม่สามารถโหลดสินค้าได้")
         const data = await res.json()
         setProducts(data)

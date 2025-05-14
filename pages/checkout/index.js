@@ -54,7 +54,7 @@ const checkout = () => {
                     let paymentId = null;
                     try {
                         const token = localStorage.getItem('token');
-                        const paymentRes = await fetch('http://localhost:8000/api/payments/', {
+                        const paymentRes = await fetch('https://three34-ouclean.onrender.com/api/payments/', {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Token ${token}`,
@@ -88,7 +88,7 @@ const checkout = () => {
                     console.log('Order payload:', orderData);
 
                     try {
-                        const orderRes = await fetch('http://localhost:8000/api/orders/', {
+                        const orderRes = await fetch('https://three34-ouclean.onrender.com/api/orders/', {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Token ${token}`,

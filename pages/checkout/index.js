@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* eslint-disable react-hooks/rules-of-hooks */
+>>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
 import {React, useState, useEffect} from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -5,6 +9,7 @@ import Footer from '../components/Footer'
 const checkout = () => {
     const [cartData, setCartData] = useState([]);
 
+<<<<<<< HEAD
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
         setCartData(storedCart);
@@ -13,6 +18,45 @@ const checkout = () => {
     // Calculate totals based on cartData
     const totalItems = cartData.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cartData.reduce((sum, item) => sum + item.price * item.quantity, 0);
+=======
+        const [cartItems, setCartItems] = useState([]);
+    
+        useEffect(() => {
+            const items = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartItems(items);
+        }, []);
+
+    const mockData = [
+        {
+            image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
+            name: "ข้าวผัดไข่ ซาบะย่าง และผักสลัด",
+            price: 150.00,
+            quantity: 1
+        },
+        {
+            image: "https://files.vogue.co.th/uploads/healthy-food-7.jpg",
+            name: "สลัดอกไก่โรยงา กินคู่กับน้ำสลัดญี่ปุ่น",
+            price: 120.00,
+            quantity: 2
+        },
+        {
+            image: "https://files.vogue.co.th/uploads/healthy-food-10.jpg",
+            name: "เมี่ยงปลาเผา",
+            price: 100.00,
+            quantity: 1
+        },
+        {
+            image: "https://files.vogue.co.th/uploads/healthy-food-11.jpg",
+            name: "แกงจืดไก่ก้อนเต้าหู้ไข่",
+            price: 80.00,
+            quantity: 3
+        }
+    ];
+
+    // คำนวณยอดรวมจำนวนรายการและราคารวมทั้งหมด
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+>>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
 
     const [showPopup, setShowPopup] = useState(false)
 
@@ -142,7 +186,11 @@ const checkout = () => {
                                 </tr>
                             </thead>
                             <tbody>
+<<<<<<< HEAD
                                 {cartData.map((item, idx) => (
+=======
+                                {cartItems.map((item, idx) => (
+>>>>>>> 28c46a0fc548689aad3f06a3844c374a8ca587da
                                     <tr key={idx} className="">
                                         <td className="py-5">
                                             <div>{item.name}</div>

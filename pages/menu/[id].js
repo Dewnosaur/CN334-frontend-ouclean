@@ -37,6 +37,27 @@ const MenuDetail = () => {
   if (error) return <div className="text-red-500">{error}</div>
   if (!product) return null
 
+  const handleAddToCart = () => {
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    const index = existingCart.findIndex((item) => item.id === mockData.id);
+
+    if (index > -1) {
+      existingCart[index].quantity += quantity;
+    } else {
+      existingCart.push({
+        id: mockData.id,
+        name: mockData.name,
+        price: mockData.price,
+        image: mockData.image,
+        quantity: quantity,
+      });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(existingCart));
+    alert('เพิ่มลงตะกร้าแล้ว!');
+  };
+
   return (
     <div className='flex flex-col min-h-screen'>
       <header className='sticky top-0 z-50'>
@@ -85,7 +106,9 @@ const MenuDetail = () => {
               </div>
 
               <div className='mt-1 text-center flex justify-center'>
-                <button className='bg-orange-300 py-2 px-8 rounded text-white hover:bg-orange-400'>ใส่ตะกร้า</button>
+                <button className='bg-orange-300 py-2 px-8 rounded text-white hover:bg-orange-400'
+                onClick={handleAddToCart}>
+                  ใส่ตะกร้า</button>
               </div>
             </div>
           </div>

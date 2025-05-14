@@ -1,9 +1,30 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Nav = () => {
   const isLogin = true;
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const [cartQuantity, setCartQuantity] = useState(0);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+      setCartQuantity(totalQuantity);
+    };
+
+    // เรียกใช้ handleStorageChange เมื่อ component โหลดขึ้นมา
+    handleStorageChange();
+
+    // ฟังการเปลี่ยนแปลงใน localStorage
+    window.addEventListener("storage", handleStorageChange);
+
+    // Clean up เมื่อ component ถูก unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);  // เรียกแค่ครั้งเดียวเมื่อ component โหลด
 
   return (
     <header className="bg-white shadow p-4">
@@ -33,7 +54,7 @@ const Nav = () => {
             <a href="cart">
               <img src="cart-icon.png" alt="cart" />
             </a>
-            <span className="absolute w-[20px] h-[20px] bg-red-500 rounded-full top-2/3 right-1/2 flex justify-center items-center text-white text-sm">0</span>
+            <span id="cart" className="absolute w-[20px] h-[20px] bg-red-500 rounded-full top-2/3 right-1/2 flex justify-center items-center text-white text-sm">{cartQuantity}</span>
           </div>
 
           {/* profile / login */}

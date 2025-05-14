@@ -35,6 +35,8 @@ const menudesc = () => {
   if (error) return <div className="text-red-500">{error}</div>
   if (!product) return null
 
+  
+
   return (
     <div className='flex flex-col min-h-screen'>
       <header className='sticky top-0 z-50'>

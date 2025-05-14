@@ -1,8 +1,16 @@
-import {React, useState} from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+import {React, useState, useEffect} from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 const checkout = () => {
+
+        const [cartItems, setCartItems] = useState([]);
+    
+        useEffect(() => {
+            const items = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartItems(items);
+        }, []);
 
     const mockData = [
         {
@@ -32,8 +40,8 @@ const checkout = () => {
     ];
 
     // คำนวณยอดรวมจำนวนรายการและราคารวมทั้งหมด
-    const totalItems = mockData.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = mockData.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [showPopup, setShowPopup] = useState(false)
@@ -164,7 +172,7 @@ const checkout = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {mockData.map((item, idx) => (
+                                {cartItems.map((item, idx) => (
                                     <tr key={idx} className="">
                                         <td className="py-5">
                                             <div>{item.name}</div>

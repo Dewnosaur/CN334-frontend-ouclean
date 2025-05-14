@@ -1,8 +1,17 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const cart = () => {
+
+    const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+        const items = JSON.parse(localStorage.getItem('cart') || '[]');
+        setCartItems(items);
+    }, []);
+
     const mockData = [
         {
             image: "https://files.vogue.co.th/uploads/healthy-food-4.jpg",
@@ -31,18 +40,23 @@ const cart = () => {
     ];
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [quantities, setQuantities] = useState(mockData.map(item => item.quantity));
 
     const increment = (index) => {
-        setQuantities(quantities.map((q, i) => (i === index ? q + 1 : q)));
+        const updated = [...cartItems];
+        updated[index].quantity += 1;
+        setCartItems(updated);
+        localStorage.setItem('cart', JSON.stringify(updated));
     };
 
     const decrement = (index) => {
-        setQuantities(quantities.map((q, i) => (i === index ? Math.max(q - 1, 1) : q)));
+        const updated = [...cartItems];
+        updated[index].quantity = Math.max(updated[index].quantity - 1, 1);
+        setCartItems(updated);
+        localStorage.setItem('cart', JSON.stringify(updated));
     };
 
-    const totalPrice = mockData.reduce((total, item, index) => {
-        return total + item.price * quantities[index];
+    const totalPrice = cartItems.reduce((total, item, index) => {
+        return total + item.price * item.quantity;
     }, 0);
 
     return (
@@ -65,7 +79,7 @@ const cart = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-white'>
-                            {mockData.map((item, index) => (
+                            {cartItems.map((item, index) => (
                                 <tr key={index}>
                                     <td className='p-4 text-sm flex items-center'>
                                         <img src={item.image} className='w-20 h-20 mr-4' alt={item.name} />
@@ -80,7 +94,7 @@ const cart = () => {
                                             >
                                                 -
                                             </button>
-                                            <div className='bg-orange-300 px-4 py-1'>{quantities[index]}</div>
+                                            <div className='bg-orange-300 px-4 py-1'>{item.quantity}</div>
                                             <button
                                                 onClick={() => increment(index)}
                                                 className='bg-orange-300 px-2 py-1 rounded-r hover:bg-orange-400'
@@ -89,7 +103,7 @@ const cart = () => {
                                             </button>
                                         </div>
                                     </td>
-                                    <td className='p-4 text-sm'>{(item.price * quantities[index]).toFixed(2)}</td>
+                                    <td className='p-4 text-sm'>{(item.price * item.quantity).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>

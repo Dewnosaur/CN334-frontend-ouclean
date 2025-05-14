@@ -20,6 +20,8 @@ const menudesc = () => {
   const increment = () => setQuantity(q => q + 1);
   const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1));
 
+  
+
   return (
     <div className='flex flex-col min-h-screen'>
       <header className='sticky top-0 z-50'>

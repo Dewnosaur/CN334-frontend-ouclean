@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Breadcrumb from '../components/navigators/Breadcrumb';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import Breadcrumb from '../../components/navigators/Breadcrumb';
 
 const Dashboard = () => {
     const [orders, setOrders] = useState([])

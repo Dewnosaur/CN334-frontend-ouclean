@@ -1,6 +1,6 @@
-import Footer from '../components/Footer'
-import LoginForm from '../components/forms/LoginForm'
-import Header from '../components/Header'
+import Footer from '../../components/Footer'
+import LoginForm from '../../components/forms/LoginForm'
+import Header from '../../components/Header'
 
 const login = () => {
   return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import Breadcrumb from '../components/navigators/Breadcrumb'
-import Card from '../components/Card'
+import Header from '../../components/Header'
+import Footer from '../../components/Footer'
+import Breadcrumb from '../../components/navigators/Breadcrumb'
+import Card from '../../components/Card'
 
 const Menu = () => {
   const [products, setProducts] = useState([])

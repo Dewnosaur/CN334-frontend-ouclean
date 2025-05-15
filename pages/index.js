@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import Header from './components/Header'
-import Breadcrumb from './components/navigators/Breadcrumb'
-import Card from './components/Card'
-import Footer from './components/Footer'
+import Header from '../components/Header'
+import Breadcrumb from '../components/navigators/Breadcrumb'
+import Card from '../components/Card'
+import Footer from '../components/Footer'
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0)
